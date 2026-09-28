@@ -2,7 +2,7 @@
 
 The code and local Git history are ready to review. These steps require the candidate's GitHub account and voice.
 
-1. Run `docker compose up --build` from a fresh clone after copying `.env.example` to `.env` and setting a new `JWT_SECRET`. Check the login, Jashim acceptance, Shirin's last seat, cancellation, and ride completion.
+1. Run `docker compose up --build` from a fresh clone after running `node scripts/setup-env.mjs` to generate private credentials. Check the login, Jashim acceptance, Shirin's last seat, cancellation, and ride completion.
 2. Run unit tests. Create a separate PostgreSQL database ending in `_test`, migrate it, and run the integration test. Do not aim the integration test at the demo database because it resets ride tables.
 3. Record a maximum six-minute walkthrough using [the outline](demo-video-outline.md). Upload it to a free accessible video service and replace the README's “To be recorded” line with the actual link.
 4. Create an empty public or evaluator-accessible GitHub repository named `dhaka-tesla-pool`. From the project folder, run:
