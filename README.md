@@ -2,8 +2,9 @@
 
 A small React, Node.js, and PostgreSQL ride-pooling MVP for the RoBenDevs internship brief. Nusrat and Rafiq request overlapping trips from Banani; Jashim accepts one request in Bullet, and the other joins the same three-seat pool. Shirin can take the last seat. Each rider sees only their own trip, fare, cash status, and timeline.
 
-**Demo video:** [Six-minute recording outline](docs/demo-video-outline.md).  
-**Live deployment:** Not published. The reproducible [Docker setup](#run-with-docker) is the deployment route for this version.
+**Demo video:** [Six-minute recording outline](docs/demo-video-outline.md); the candidate recording is still to come.
+
+**Live app:** [Dhaka Tesla Pool](https://dhaka-tesla-pool-web-nine.vercel.app/) · [API health](https://dhaka-tesla-pool-api-nine.vercel.app/health). The frontend and API run on Vercel with Neon PostgreSQL. The demo password is shared privately, never in this repository.
 
 ![Driver pool with Nusrat and Rafiq](docs/screenshots/driver-pool.png)
 
@@ -127,7 +128,7 @@ npm run test:integration
 
 The integration test checks role boundaries, Nusrat/Rafiq fares and membership, invalid transitions, cancellation, cash completion, and two simultaneous attempts to claim Bullet's last seat. It can be rerun against the dedicated test database.
 
-**Verified in this workspace:** React production build and unit tests pass. The SQL migrations, seed, and end-to-end API test passed against a local PGlite PostgreSQL-compatible wire server, and the browser flow was checked at desktop and phone widths. A native Docker daemon and PostgreSQL server were unavailable here, so `docker compose up` and native PostgreSQL contention still need a run in your environment.
+**Verified:** React production build and unit tests pass. The SQL migrations, seed, and end-to-end API test passed against a local PGlite PostgreSQL-compatible wire server. The live Vercel API returned 200 for `/health` and `/api/zones`; browser checks confirmed seeded passenger and driver sign-in, the fare quote and timeline, and automatic grouping of Nusrat and Rafiq after Jashim accepted one request. A native Docker daemon and PostgreSQL server were unavailable in the build workspace, so `docker compose up` and native PostgreSQL contention still need a run in your environment.
 
 ## Choices and trade-offs
 
@@ -141,9 +142,9 @@ The integration test checks role boundaries, Nusrat/Rafiq fares and membership, 
 | Polling every six seconds | WebSockets, server-sent events | Simple state refresh for a tiny demo | Dispatch latency or driver scale requires push updates |
 | Plain CSS | Tailwind, component library | Small screen set and minimal dependencies | A larger design system emerges |
 | `node:test` | Vitest, Jest | Covers risky behavior without extra runtime | More UI and component testing becomes valuable |
-| Docker Compose | Free-tier host | Reproducible API + database when reliable free hosting is unavailable | A maintained public host and managed database are available |
+| Docker Compose and Vercel/Neon | Docker only | Local reproducibility plus a reviewable public demo | A dedicated host is needed for stronger uptime or scale |
 
-**Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, rate limit, production deployment, or recorded video. The generated demo password is for local demo only and stays outside Git. The frontend and API require configured public origins and HTTPS before a public deployment.
+**Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, rate limit, or recorded video. The hosted demo password stays outside Git. The Vercel projects were uploaded manually and are not linked to GitHub, so code pushes do not trigger deployment.
 
 For the larger-scale design, see [If Oi Tesla Goes Viral](docs/scaling.md). For a candidate-owned walkthrough, see the [video outline](docs/demo-video-outline.md).
 
