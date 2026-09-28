@@ -2,7 +2,7 @@
 
 The Docker Compose setup remains the reproducible reference. The public demo uses two Vercel projects and a free Neon PostgreSQL database. Keep all credentials in the host's private environment settings; never commit a `.env` file or put the demo password in the video.
 
-Current deployment: [web app](https://dhaka-tesla-pool-web-nine.vercel.app/) and [API health](https://dhaka-tesla-pool-api-nine.vercel.app/health). Both Vercel projects were uploaded manually, not connected to GitHub. A GitHub push alone does not deploy; upload a fresh project archive or connect Git through a separate authorized integration when updating either project.
+Current deployment: [web app](https://dhaka-tesla-pool-web-nine.vercel.app/) and [API health](https://dhaka-tesla-pool-api-nine.vercel.app/health). The web project is connected to this GitHub repository with `web` as its Root Directory. Commits on `main` trigger web deployments. The API project was uploaded manually and still needs a separate deployment when its code changes.
 
 1. Import this GitHub repository into Vercel as an API project. Set its **Root Directory** to `api` and use the Express framework preset. `src/app.js` exports the Express app for Vercel; `src/server.js` remains the Docker entry point.
 2. Add a Neon Postgres database on the free plan and connect it to the API project for production. Confirm that the API project has a pooled `DATABASE_URL`. Set private production variables `JWT_SECRET` (32 or more characters), `DEMO_PASSWORD` (12 or more characters), and `WEB_ORIGIN` (the exact frontend origin once known).
