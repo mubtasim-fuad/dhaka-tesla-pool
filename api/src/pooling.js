@@ -1,6 +1,6 @@
 import { transaction } from './db.js';
 import { AppError } from './errors.js';
-import { compatible, nextPoolStatus, quoteFare, routeGroup } from './domain.js';
+import { nextPoolStatus, quoteFare, routeGroup } from './domain.js';
 
 function id(value) {
   if (!/^\d+$/.test(String(value))) throw new AppError(400,'Invalid ID');
@@ -18,7 +18,8 @@ async function event(db, { requestId, poolId, actorId, type, from, to, details =
 // All callers hold SELECT ... FOR UPDATE on this pool's vehicle row.
 async function attach(db, vehicle, currentPool, request, actorId) {
   if (currentPool.status !== 'MATCHED' || request.status !== 'REQUESTED') return false;
-  if (!compatible(currentPool,request)) return false;
+  if (currentPool.pickup_zone !== request.pickup_zone ||
+      currentPool.route_group !== routeGroup(request.pickup_zone,request.destination_zone)) return false;
   const occupied = await db.query(
     `SELECT COALESCE(SUM(seats),0)::integer AS seats FROM pool_memberships
      WHERE pool_id=$1 AND left_at IS NULL`, [currentPool.id]
