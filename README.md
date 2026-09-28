@@ -144,7 +144,7 @@ The integration test checks role boundaries, Nusrat/Rafiq fares and membership, 
 | `node:test` | Vitest, Jest | Covers risky behavior without extra runtime | More UI and component testing becomes valuable |
 | Docker Compose and Vercel/Neon | Docker only | Local reproducibility plus a reviewable public demo | A dedicated host is needed for stronger uptime or scale |
 
-**Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, rate limit, or recorded video. The hosted demo password stays outside Git. The Vercel projects were uploaded manually and are not linked to GitHub, so code pushes do not trigger deployment.
+**Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, rate limit, or recorded video. The hosted demo password stays outside Git. The web project is connected to this GitHub repository with `web` as its Root Directory; pushes to `main` trigger web deployments. The API project still uses a separate manual deployment workflow.
 
 For the larger-scale design, see [If Oi Tesla Goes Viral](docs/scaling.md). For a candidate-owned walkthrough, see the [video outline](docs/demo-video-outline.md).
 
