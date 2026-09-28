@@ -26,7 +26,7 @@ export function DriverDashboard({ session,onSessionExpired }) {
   }
   const pools=grouped(data?.rides || []), active=pools.find(p=>next[p.status]);
   const occupied=active?.members.filter(m=>!m.left_at).reduce((total,m)=>total+m.seats,0) || 0;
-  return <main className="page"><div className="page-heading"><div><div className="eyebrow">DRIVER DESK</div><h1>Good morning, {session.user.name}.</h1><p className="muted">Know who is aboard before Bullet moves.</p></div>
+  return <main className="page"><div className="page-heading"><div><div className="eyebrow">DRIVER DESK</div><h1>Hello, {session.user.name}.</h1><p className="muted">Know who is aboard before Bullet moves.</p></div>
     {data && <button className={`online-toggle ${data.vehicle.online?'on':'off'}`} disabled={busy} onClick={()=>action('/api/driver/online',{online:!data.vehicle.online})}><span className="online-dot"/>{data.vehicle.online?'Online · accepting rides':'Offline · go online'}</button>}</div>
     {error && <p role="alert" className="notice error">{error}</p>}{message && <p role="status" className="notice success">{message}</p>}
     {loading ? <div className="panel"><p className="muted">Loading driver desk…</p></div> : !data ? <div className="panel">Driver desk unavailable.</div> : <div className="dashboard-grid driver-grid">
