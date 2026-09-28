@@ -2,7 +2,7 @@
 
 A small React, Node.js, and PostgreSQL ride-pooling MVP for the RoBenDevs internship brief. Nusrat and Rafiq request overlapping trips from Banani; Jashim accepts one request in Bullet, and the other joins the same three-seat pool. Shirin can take the last seat. Each rider sees only their own trip, fare, cash status, and timeline.
 
-**Demo video:** To be recorded by the candidate. [Six-minute recording outline](docs/demo-video-outline.md).  
+**Demo video:** [Six-minute recording outline](docs/demo-video-outline.md).  
 **Live deployment:** Not published. The reproducible [Docker setup](#run-with-docker) is the deployment route for this version.
 
 ![Driver pool with Nusrat and Rafiq](docs/screenshots/driver-pool.png)
