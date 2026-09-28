@@ -20,7 +20,7 @@ function App() {
     {!session ? <Auth onSignedIn={signedIn} /> : session.user.role === 'DRIVER'
       ? <DriverDashboard session={session} onSessionExpired={signOut} />
       : <PassengerDashboard session={session} onSessionExpired={signOut} />}
-    <footer>Dhaka Tesla Pool · A local demo with cash fares and fictional accounts</footer>
+    <footer>Dhaka Tesla Pool · A ride-pooling demo with cash fares and fictional accounts</footer>
   </>;
 }
 
