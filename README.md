@@ -1,5 +1,7 @@
 # Dhaka Tesla Pool
 
+**About me:** Md Mubtasim Fuad | North South University CSE ’25 | Building full-stack software.
+
 This React, Node.js, and PostgreSQL ride-pooling MVP was built for the RoBenDevs internship brief. Nusrat and Rafiq request compatible trips from Banani; Jashim groups them in his three-seat vehicle Bullet, and Shirin can take the last seat. Each rider sees their own trip, fare, cash status, and timeline.
 
 **Demo video:** Recording in progress. The [six-minute walkthrough plan](docs/demo-video-outline.md) is available now; the actual recording link will be added after it is made.
