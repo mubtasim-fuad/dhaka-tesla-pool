@@ -1,8 +1,8 @@
 # Dhaka Tesla Pool
 
-A small React, Node.js, and PostgreSQL ride-pooling MVP for the RoBenDevs internship brief. Nusrat and Rafiq request overlapping trips from Banani; Jashim accepts one request in Bullet, and the other joins the same three-seat pool. Shirin can take the last seat. Each rider sees only their own trip, fare, cash status, and timeline.
+This React, Node.js, and PostgreSQL ride-pooling MVP was built for the RoBenDevs internship brief. Nusrat and Rafiq request compatible trips from Banani; Jashim groups them in his three-seat vehicle Bullet, and Shirin can take the last seat. Each rider sees their own trip, fare, cash status, and timeline.
 
-**Demo video:** [Six-minute recording outline](docs/demo-video-outline.md); the candidate recording is still to come.
+**Demo video:** Recording in progress. The [six-minute walkthrough plan](docs/demo-video-outline.md) is available now; the actual recording link will be added after it is made.
 
 **Live app:** [Dhaka Tesla Pool](https://dhaka-tesla-pool-web-nine.vercel.app/) · [API health](https://dhaka-tesla-pool-api-nine.vercel.app/health). The frontend and API run on Vercel with Neon PostgreSQL. The demo password is shared privately, never in this repository.
 
@@ -146,8 +146,8 @@ The integration test checks role boundaries, Nusrat/Rafiq fares and membership, 
 
 **Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, rate limit, or recorded video. The hosted demo password stays outside Git. The web project is connected to this GitHub repository with `web` as its Root Directory; pushes to `main` trigger web deployments. The API project still uses a separate manual deployment workflow.
 
-For the larger-scale design, see [If Oi Tesla Goes Viral](docs/scaling.md). For a candidate-owned walkthrough, see the [video outline](docs/demo-video-outline.md).
+For the larger-scale design, see [If Oi Tesla Goes Viral](docs/scaling.md). The recording plan is in the [video outline](docs/demo-video-outline.md).
 
 ## AI usage
 
-OpenAI Codex was used to draft code, documentation, and tests and to inspect local browser screens. I accepted the suggestion to serialize seat assignment with a vehicle lock. A first implementation counted active membership rows after locking; a simultaneous last-seat test exposed a weakness in the local compatibility runner, so I changed it to an atomic pool counter with a database check as a second guard. The candidate should run the Docker setup, inspect the commits, and be able to explain or change every part before submission.
+OpenAI Codex assisted with parts of the code, documentation, tests, and browser checks. The last-seat race led to a revision: the first approach counted active membership rows after locking; the current implementation uses an atomic pool counter plus a database check. The implementation, tests, and limitations are here for review and reproduction.
