@@ -56,6 +56,7 @@ export function PassengerDashboard({ session, onSessionExpired }) {
           <div className="ride-top"><strong>{ride.pickup_zone} <span className="arrow">→</span> {ride.destination_zone}</strong><Badge status={ride.status}/></div>
           <div className="ride-meta"><span>#{ride.id} · {time(ride.created_at)}</span><span>{ride.seats} {ride.seats===1?'seat':'seats'}</span></div>
           <div className="ride-detail"><span>{ride.vehicle_name ? `${ride.vehicle_name} · ${ride.driver_name}` : 'Waiting for a driver'}</span><strong>{ride.fare_paisa == null ? 'Fare pending' : money(ride.fare_paisa)}</strong></div>
+          {ride.payment_method && <p className="payment-note">Cash · {ride.payment_status === 'COLLECTED' ? 'collected' : ride.payment_status === 'VOID' ? 'void' : 'due at trip end'}</p>}
           <div className="ride-actions"><button className="text-button" onClick={()=>viewEvents(ride.id)}>{events[ride.id] ? 'Hide timeline' : 'View timeline'}</button>
             {['REQUESTED','MATCHED','DRIVER_ARRIVED'].includes(ride.status) && <button disabled={busy} className="text-button danger" onClick={()=>action(async()=>{await api(`/api/requests/${ride.id}/cancel`,{token,method:'POST'});setMessage('Ride cancelled.');})}>Cancel ride</button>}
           </div>

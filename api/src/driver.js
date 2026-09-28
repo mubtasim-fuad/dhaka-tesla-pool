@@ -17,7 +17,7 @@ router.get('/dashboard', async (req,res) => {
   const rides = await pool.query(
     `SELECT p.id AS pool_id,p.status AS pool_status,p.pickup_zone,p.route_group,p.created_at,
             r.id AS request_id,r.status AS request_status,r.destination_zone,r.seats,
-            m.fare_paisa,m.left_at,u.name AS passenger_name
+            m.fare_paisa,m.left_at,m.payment_status,u.name AS passenger_name
      FROM pools p JOIN pool_memberships m ON m.pool_id=p.id JOIN ride_requests r ON r.id=m.request_id
      JOIN users u ON u.id=r.passenger_id WHERE p.vehicle_id=$1 ORDER BY p.created_at DESC,p.id DESC,r.id`, [vehicle.rows[0].id]
   );
