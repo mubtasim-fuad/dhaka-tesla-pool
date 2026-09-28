@@ -11,5 +11,5 @@ export async function api(path, { token, method = 'GET', body } = {}) {
   return data;
 }
 
-export function money(paisa) { return `৳${(Number(paisa) / 100).toFixed(0)}`; }
+export function money(paisa) { return `Tk ${(Number(paisa) / 100).toFixed(0)}`; }
 export function time(value) { return new Date(value).toLocaleString('en-BD',{dateStyle:'medium',timeStyle:'short'}); }

@@ -20,11 +20,12 @@ async function attach(db, vehicle, currentPool, request, actorId) {
   if (currentPool.status !== 'MATCHED' || request.status !== 'REQUESTED') return false;
   if (currentPool.pickup_zone !== request.pickup_zone ||
       currentPool.route_group !== routeGroup(request.pickup_zone,request.destination_zone)) return false;
-  const occupied = await db.query(
-    `SELECT COALESCE(SUM(seats),0)::integer AS seats FROM pool_memberships
-     WHERE pool_id=$1 AND left_at IS NULL`, [currentPool.id]
+  // This conditional UPDATE is an atomic second guard in addition to the vehicle lock.
+  const seatClaim = await db.query(
+    `UPDATE pools SET occupied_seats=occupied_seats+$2 WHERE id=$1 AND status='MATCHED'
+     AND occupied_seats+$2 <= capacity RETURNING id`, [currentPool.id,request.seats]
   );
-  if (occupied.rows[0].seats + request.seats > vehicle.capacity) return false;
+  if (!seatClaim.rowCount) return false;
   const fare = quoteFare(request.pickup_zone,request.destination_zone,request.seats);
   await db.query(
     `INSERT INTO pool_memberships(request_id,pool_id,seats,fare_paisa)
@@ -89,8 +90,8 @@ export async function acceptRequest(driverId, requestId) {
     if (!request || request.status !== 'REQUESTED') throw new AppError(409,'Request is no longer available');
     if (request.seats > vehicle.capacity) throw new AppError(409,'Party exceeds vehicle capacity');
     const created = await db.query(
-      `INSERT INTO pools(vehicle_id,pickup_zone,route_group) VALUES($1,$2,$3) RETURNING *`,
-      [vehicle.id,request.pickup_zone,routeGroup(request.pickup_zone,request.destination_zone)]
+      `INSERT INTO pools(vehicle_id,pickup_zone,route_group,capacity) VALUES($1,$2,$3,$4) RETURNING *`,
+      [vehicle.id,request.pickup_zone,routeGroup(request.pickup_zone,request.destination_zone),vehicle.capacity]
     );
     const currentPool = created.rows[0];
     await attach(db,vehicle,currentPool,request,driverId);
@@ -128,15 +129,16 @@ export async function cancelRequest(passengerId, requestId) {
       throw new AppError(409,'This ride can no longer be cancelled');
     }
     const membership = await db.query(
-      `SELECT pool_id FROM pool_memberships WHERE request_id=$1 AND left_at IS NULL`,[target]
+      `SELECT pool_id,seats FROM pool_memberships WHERE request_id=$1 AND left_at IS NULL`,[target]
     );
     if (membership.rowCount) {
       const poolId = membership.rows[0].pool_id;
-      await db.query('UPDATE pool_memberships SET left_at=now() WHERE request_id=$1',[target]);
+      await db.query("UPDATE pool_memberships SET left_at=now(),payment_status='VOID' WHERE request_id=$1",[target]);
       const remaining = await db.query(
-        'SELECT 1 FROM pool_memberships WHERE pool_id=$1 AND left_at IS NULL LIMIT 1',[poolId]
+        `UPDATE pools SET occupied_seats=occupied_seats-$2,updated_at=now()
+         WHERE id=$1 RETURNING occupied_seats`,[poolId,membership.rows[0].seats]
       );
-      if (!remaining.rowCount) await db.query(
+      if (remaining.rows[0].occupied_seats === 0) await db.query(
         `UPDATE pools SET status='CANCELLED',updated_at=now() WHERE id=$1`,[poolId]
       );
     }
@@ -160,6 +162,9 @@ export async function advancePool(driverId, poolId, to) {
     );
     if (!members.rowCount) throw new AppError(409,'Cannot advance an empty pool');
     await db.query('UPDATE pools SET status=$1,updated_at=now() WHERE id=$2',[to,currentPool.id]);
+    if (to === 'COMPLETED') await db.query(
+      "UPDATE pool_memberships SET payment_status='COLLECTED' WHERE pool_id=$1 AND left_at IS NULL",[currentPool.id]
+    );
     await db.query(
       `UPDATE ride_requests SET status=$1,updated_at=now()
        WHERE id = ANY($2::bigint[])`,[to,members.rows.map(x => x.request_id)]

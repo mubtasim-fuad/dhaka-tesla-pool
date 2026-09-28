@@ -24,7 +24,8 @@ router.post('/', async (req,res) => {
 router.get('/', async (req,res) => {
   const result = await pool.query(
     `SELECT r.id,r.pickup_zone,r.destination_zone,r.seats,r.status,r.created_at,r.updated_at,
-            m.fare_paisa,m.pool_id,v.name AS vehicle_name,u.name AS driver_name
+            m.fare_paisa,m.pool_id,m.payment_method,m.payment_status,
+            v.name AS vehicle_name,u.name AS driver_name
      FROM ride_requests r LEFT JOIN pool_memberships m ON m.request_id=r.id
      LEFT JOIN pools p ON p.id=m.pool_id LEFT JOIN vehicles v ON v.id=p.vehicle_id
      LEFT JOIN users u ON u.id=v.driver_id
