@@ -1,0 +1,11 @@
+# Optional public deployment on free tiers
+
+The Docker Compose setup remains the reproducible reference. A public demo can use two Vercel projects from this repository and a free Neon PostgreSQL database. Keep all credentials in the host's private environment settings; never commit a `.env` file or put the demo password in the video.
+
+1. Import this GitHub repository into Vercel as an API project. Set its **Root Directory** to `api` and use the Express framework preset. `src/app.js` exports the Express app for Vercel; `src/server.js` remains the Docker entry point.
+2. Add a Neon Postgres database on the free plan and connect it to the API project for production. Confirm that the API project has a pooled `DATABASE_URL`. Set private production variables `JWT_SECRET` (32 or more characters), `DEMO_PASSWORD` (12 or more characters), and `WEB_ORIGIN` (the exact frontend origin once known).
+3. Run migrations and the demo seed **once** against the production database from a trusted local terminal in `api/`: `npm ci`, `npm run migrate`, then `npm run seed`. Use Neon's direct connection string for the migration if supplied, and the same private `DEMO_PASSWORD` value as the API project. Do not run the integration test against this database: that test resets ride tables.
+4. Import this repository again as a web project. Set its **Root Directory** to `web` and use the Vite framework preset. Add `VITE_API_URL=https://YOUR-API-DOMAIN` to the web project's production environment **before** its build. The API's `/health` endpoint is at `https://YOUR-API-DOMAIN/health`.
+5. Set the API project's `WEB_ORIGIN=https://YOUR-WEB-DOMAIN` with no trailing slash and redeploy the API. Visit the web domain, sign in as Jashim, accept Nusrat's request, and confirm Rafiq joins Bullet. Test Shirin's final seat, completion, history, and the `/health` endpoint.
+
+Keep the hosted demo password separate from source code and share it only through the private assessment channel. A public demo can be reset by running the idempotent seed on a fresh database; rerunning the seed on an existing database preserves ride history. Free-tier availability and limits can change, so verify them before provisioning; do not select a paid plan for this assessment.

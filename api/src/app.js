@@ -17,3 +17,6 @@ app.use('/api/auth',auth);
 app.use('/api/requests',requireAuth,passenger);
 app.use('/api/driver',requireAuth,driver);
 app.use(handleError);
+
+// The same Express app runs under Docker and as a Vercel Function.
+export default app;
