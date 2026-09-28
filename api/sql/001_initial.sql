@@ -75,3 +75,6 @@ CREATE TABLE ride_events (
 );
 CREATE INDEX ride_events_request_idx ON ride_events(request_id, id);
 CREATE INDEX ride_events_pool_idx ON ride_events(pool_id, id);
+
+CREATE UNIQUE INDEX ride_requests_one_active_per_passenger ON ride_requests(passenger_id)
+  WHERE status IN ('REQUESTED','MATCHED','DRIVER_ARRIVED','STARTED');
