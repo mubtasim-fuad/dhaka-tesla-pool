@@ -1,16 +1,18 @@
-# Six Minute Demo Video Outline
+# Six-minute demo video plan
 
-Record this yourself in your own words after running the app. Show the repository and working screens, and put the video URL near the top of the README. Keep the total under six minutes.
+Record the walkthrough yourself in your own voice. Keep the private demo password, .env files, and Vercel settings off screen. Rehearse with a timer and leave ten seconds for delays.
+
+The hosted demo may already have Nusrat and Rafiq matched in Bullet (2/3 seats). If so, start from that real state and let Shirin request the last seat. If the state changed, prepare fresh compatible requests before recording or show the existing screenshot and describe it accurately. Do not delete production data just to reset the demo.
 
 | Time | Show | Explain |
 | --- | --- | --- |
-| 0:00–1:00 | Login screen and story | Nusrat and Rafiq have different destinations but share a Banani pickup. Bullet has three seats. Each rider needs a private fare and status. |
-| 1:00–1:45 | README architecture diagram and ERD | Browser → React → Express → PostgreSQL; requests are separate from pools and membership fares. |
-| 1:45–2:30 | `pooling.js` and migration 002 | Vehicle row lock, atomic `occupied_seats` update, capacity check, and last-seat race. This is the most useful engineering decision to defend. |
-| 2:30–3:00 | Fare and route rule | Tk 98 for Nusrat, Tk 86 for Rafiq; the Banani corridor assumption and fixed discount trade-off. |
-| 3:00–3:45 | Jashim driver dashboard | Accept Nusrat; Rafiq joins; show manifest and 2/3 seats. |
-| 3:45–4:30 | Shirin passenger dashboard | Request Banani → Gulshan 1; show 3/3 seats and Shirin's own fare/status. Show that a fourth request waits. |
-| 4:30–5:15 | Driver transitions | Arrived → started → completed; rider timeline and collected cash status. Try an invalid transition or late cancellation. |
-| 5:15–6:00 | Tests, Docker setup, limitations | Point to the integration test and explain why no real route map or public hosted URL is included. Mention the next improvement you would build. |
+| 0:00–0:40 | Live landing page and README | Problem, users, Bullet's three seats, individual fares and timelines. |
+| 0:40–1:25 | Architecture diagram and database table | React/Vite → Express → PostgreSQL; requests, pools, membership, and events. |
+| 1:25–2:10 | `api/src/pooling.js` and migration 002 | Vehicle lock, conditional seat claim, database capacity guard, last-seat race. |
+| 2:10–2:45 | Fare assumptions or `api/src/domain.js` | Compatible Banani routes; Tk 98 for Nusrat, Tk 86 for Rafiq; integer paisa. |
+| 2:45–3:35 | Jashim driver dashboard | Show the 2/3 pool or accept a fresh request and watch the compatible rider join. |
+| 3:35–4:20 | Shirin passenger page, then driver page | Quote, request, 3/3 capacity if it actually appears; own status and timeline. |
+| 4:20–5:10 | Driver transitions and passenger timeline | Arrived → started → completed, event history, cash collected. |
+| 5:10–5:50 | Integration test, limits, and live URL | Test coverage, zones/polling/cash limits, honest AI assistance disclosure. |
 
-Before recording, run a clean demo, keep your cursor visible, and speak without reading this outline verbatim. A reviewer may ask you to modify this code live.
+Check the exported recording for legible text, clear audio, and a duration under six minutes. Upload it, test its link while signed out, and replace the README placeholder with the actual video URL. Share demo credentials only through the private assessment channel.
