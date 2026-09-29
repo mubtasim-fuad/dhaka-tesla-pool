@@ -4,7 +4,7 @@
 
 This React, Node.js, and PostgreSQL ride-pooling MVP was built for the RoBenDevs internship brief. Nusrat and Rafiq request compatible trips from Banani; Jashim groups them in his three-seat vehicle Bullet, and Shirin can take the last seat. Each rider sees their own trip, fare, cash status, and timeline.
 
-**Demo video:** Recording in progress. The [six-minute walkthrough plan](docs/demo-video-outline.md) is available now; the actual recording link will be added after it is made.
+**Video walkthrough (5:50):** [Watch the deployed video](https://dhaka-tesla-pool-web-nine.vercel.app/demo.mp4) · [Read the simple timed script](docs/demo-video-script.md). The video shows the live public landing page and real GitHub repository; its signed-in passenger and driver scenes are labeled repository screenshots. The spoken track is a synthetic rehearsal guide to replace with my own narration for the final submission.
 
 **Live app:** [Dhaka Tesla Pool](https://dhaka-tesla-pool-web-nine.vercel.app/) · [API health](https://dhaka-tesla-pool-api-nine.vercel.app/health). The frontend and API run on Vercel with Neon PostgreSQL. The demo password is shared privately, never in this repository.
 
@@ -146,9 +146,9 @@ The integration test checks role boundaries, Nusrat/Rafiq fares and membership, 
 | `node:test` | Vitest, Jest | Covers risky behavior without extra runtime | More UI and component testing becomes valuable |
 | Docker Compose and Vercel/Neon | Docker only | Local reproducibility plus a reviewable public demo | A dedicated host is needed for stronger uptime or scale |
 
-**Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, rate limit, or recorded video. The hosted demo password stays outside Git. The web project is connected to this GitHub repository with `web` as its Root Directory; pushes to `main` trigger web deployments. The API project still uses a separate manual deployment workflow.
+**Known limitations:** Matching uses zones, not route geometry or driver proximity; money is an estimate until assignment; status refresh uses polling; token storage is browser local storage; no password reset, driver registration, real payment, map, notification, or rate limit. The hosted demo password stays outside Git. The web project is connected to this GitHub repository with `web` as its Root Directory; pushes to `main` trigger web deployments. The API project still uses a separate manual deployment workflow.
 
-For the larger-scale design, see [If Oi Tesla Goes Viral](docs/scaling.md). The recording plan is in the [video outline](docs/demo-video-outline.md).
+For the larger-scale design, see [If Oi Tesla Goes Viral](docs/scaling.md). The [video script](docs/demo-video-script.md) and [original outline](docs/demo-video-outline.md) document the walkthrough.
 
 ## AI usage
 
