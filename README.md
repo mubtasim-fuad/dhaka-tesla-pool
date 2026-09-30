@@ -1,12 +1,45 @@
 # Dhaka Tesla Pool
 
-**About me:** Md Mubtasim Fuad | North South University CSE ’25 | Building full-stack software.
+**Shared seats, clear fares, and a ride history each passenger can follow.**
 
-This React, Node.js, and PostgreSQL ride-pooling MVP was built for the RoBenDevs internship brief. Nusrat and Rafiq request compatible trips from Banani; Jashim groups them in his three-seat vehicle Bullet, and Shirin can take the last seat. Each rider sees their own trip, fare, cash status, and timeline.
+A ride-pooling MVP for a three-seat vehicle in Dhaka, built for the RoBenDevs internship brief by Md Mubtasim Fuad (North South University CSE ’25).
 
-**Live app:** [Dhaka Tesla Pool](https://dhaka-tesla-pool-web-nine.vercel.app/) · [API health](https://dhaka-tesla-pool-api-nine.vercel.app/health). The frontend and API run on Vercel with Neon PostgreSQL. The demo password is shared privately, never in this repository.
+| | |
+| --- | --- |
+| **Live app** | [Open Dhaka Tesla Pool](https://dhaka-tesla-pool-web-nine.vercel.app/) |
+| **API health** | [Check the API](https://dhaka-tesla-pool-api-nine.vercel.app/health) |
+| **Stack** | React + Vite · Express · PostgreSQL · handwritten SQL · Docker Compose |
+| **Hosting** | Vercel (web and API) · Neon (PostgreSQL) |
 
-![Driver pool with Nusrat and Rafiq](docs/screenshots/driver-pool.png)
+The demo password is shared privately, never in this repository. The hosted app is a working demo, and its current ride state may differ from the screenshots below.
+
+## Contents
+
+[Summary](#summary) · [Problem](#the-problem) · [Screenshots](#screenshots) · [Features](#what-works) · [How it works](#how-it-works) · [Architecture and ERD](#architecture) · [Fares](#assumptions-and-fares) · [Last-seat race](#the-last-seat-race) · [Project structure](#project-structure) · [Run with Docker](#run-with-docker) · [API](#api-overview) · [Tests](#tests-and-verification) · [Deployment](#deployment) · [Trade-offs](#choices-and-trade-offs) · [AI usage](#ai-usage)
+
+## Summary
+
+Nusrat requests Banani → Mohakhali and Rafiq requests Banani → Gulshan 1. Jashim accepts a request in his three-seat vehicle, Bullet. The app places compatible waiting riders in one pool; Shirin can take the last seat if her request fits before departure. Each passenger keeps a separate request, fare, cash status, and timeline. This project's example fares are **Tk 98 for Nusrat** and **Tk 86 for Rafiq**, fixed when a seat is assigned.
+
+## The problem
+
+Pooling must answer five questions consistently:
+
+- **Compatibility:** Which trips can share one vehicle under the documented route rule?
+- **Capacity:** Can two near-simultaneous requests claim the last seat without overbooking?
+- **Fare:** What does each passenger owe, and when does that amount become fixed?
+- **State:** Can the driver or passenger skip a step or cancel after the trip starts?
+- **Privacy and history:** Can a passenger see only their own ride and its events?
+
+## Screenshots
+
+Captured from a demo session; the live database can have a different state.
+
+| Sign in | Passenger ride |
+| --- | --- |
+| ![Login screen](docs/screenshots/login.png) | ![Passenger booking and ride status](docs/screenshots/passenger.png) |
+| **Driver pool** | **Phone layout** |
+| ![Bullet with pooled riders](docs/screenshots/driver-pool.png) | ![Driver page on a phone](docs/screenshots/mobile-driver.png) |
 
 ## What works
 
@@ -18,7 +51,15 @@ This React, Node.js, and PostgreSQL ride-pooling MVP was built for the RoBenDevs
 - Vehicle-row locking plus an atomic seat claim and database capacity check.
 - Role-scoped API, validation, health endpoint, migrations, seed data, Docker Compose, unit and integration tests.
 
-Screens: [login](docs/screenshots/login.png) · [passenger](docs/screenshots/passenger.png) · [driver](docs/screenshots/driver-pool.png) · [phone layout](docs/screenshots/mobile-driver.png)
+## How it works
+
+1. A passenger chooses one of eight named zones, a destination, and 1–3 seats. The API returns an estimated fare before the request is placed.
+2. A new request starts as `REQUESTED`. If an online driver's active `MATCHED` pool has the same pickup and route group and enough capacity, it can join immediately.
+3. Otherwise, an online driver accepts a waiting request. This creates a pool and checks other compatible waiting requests. The driver may retry **Find more riders** before departure.
+4. Each attached passenger receives a fixed fare in `pool_memberships`. The driver advances the pool through `MATCHED → DRIVER_ARRIVED → STARTED → COMPLETED`; corresponding passenger requests and event timelines advance in the same transaction.
+5. A passenger may cancel before `STARTED`. Their seats are released; if no active riders remain, the pool becomes `CANCELLED`. Completed rides mark cash as collected.
+
+The example Banani routes share a `BANANI_EAST` group. Other routes require an exact pickup and destination match. This is a documented demo rule, not a live-road detour calculation.
 
 ## Architecture
 
@@ -66,6 +107,24 @@ erDiagram
 ### The last-seat race
 
 Every mutation of a pool's seats first locks Bullet's vehicle row with `SELECT ... FOR UPDATE`. A seat claim also uses `UPDATE pools SET occupied_seats = occupied_seats + requested_seats WHERE occupied_seats + requested_seats <= capacity`, inside the same transaction. The database check constraint is the final guard. Two callers claiming the last seat cannot both succeed on PostgreSQL; the loser remains `REQUESTED`. Cancellation decrements the count in the same transaction. At larger scale, partition matching by area and reduce lock contention without weakening this database invariant.
+
+## Project structure
+
+```text
+api/
+  src/          Express routes, authentication, pooling, fares, migrations, and seed
+  sql/          Schema and capacity/cash migrations
+  test/         Domain unit tests and ride integration tests
+web/
+  src/          React authentication, passenger and driver screens, API client, CSS
+docs/
+  screenshots/  Captures from a demo session
+  scaling.md    Larger-scale design
+  deploy-vercel.md  Hosting notes
+scripts/
+  setup-env.mjs Generates private local credentials
+docker-compose.yml
+```
 
 ## Run with Docker
 
@@ -129,6 +188,12 @@ npm run test:integration
 The integration test checks role boundaries, Nusrat/Rafiq fares and membership, invalid transitions, cancellation, cash completion, and two simultaneous attempts to claim Bullet's last seat. It can be rerun against the dedicated test database.
 
 **Verified:** React production build and unit tests pass. The SQL migrations, seed, and end-to-end API test passed against a local PGlite PostgreSQL-compatible wire server. The live Vercel API returned 200 for `/health` and `/api/zones`; browser checks confirmed seeded passenger and driver sign-in, the fare quote and timeline, and automatic grouping of Nusrat and Rafiq after Jashim accepted one request. A native Docker daemon and PostgreSQL server were unavailable in the build workspace, so `docker compose up` and native PostgreSQL contention still need a run in your environment.
+
+## Deployment
+
+The React app and Express API are deployed as separate Vercel projects, backed by Neon PostgreSQL. The web project uses `web` as its Root Directory and deploys from `main`; API changes still require a separate deployment workflow. The live links are at the top of this page. The hosted demo password is distributed privately.
+
+For local reproduction, use the Docker instructions below. The repository records what was tested and what still needs a native Docker/PostgreSQL run in [Tests and verification](#tests-and-verification).
 
 ## Choices and trade-offs
 
