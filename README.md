@@ -7,6 +7,7 @@ A ride-pooling MVP for a three-seat vehicle in Dhaka, built for the RoBenDevs in
 | | |
 | --- | --- |
 | **Live app** | [Open Dhaka Tesla Pool](https://dhaka-tesla-pool-web-nine.vercel.app/) |
+| **Demo video** | [Watch the project walkthrough](https://drive.google.com/file/d/17bLvyXw7KzkAXZr8Z4_NDqXg0TW3rMtg/view?usp=drivesdk) |
 | **API health** | [Check the API](https://dhaka-tesla-pool-api-nine.vercel.app/health) |
 | **Stack** | React + Vite · Express · PostgreSQL · handwritten SQL · Docker Compose |
 | **Hosting** | Vercel (web and API) · Neon (PostgreSQL) |
